@@ -6,9 +6,9 @@ var Target = require('./getui/Target');
 var SingleMessage = require('./getui/message/SingleMessage');
 var TransmissionTemplate = require('./getui/template/TransmissionTemplate');
 
-function pushMessageToSingle(clientId, content, alertMessage, badge, sound, ALIAS) {
-	var gt = GlobalConfig.gt
-    var template = createTransmissionTemplate(content, alertMessage, badge, sound);
+function pushMessageToSingle(clientId, content, transmissionType, alertMessage, badge, sound, ALIAS) {
+    var gt = GlobalConfig.gt
+    var template = createTransmissionTemplate(content, transmissionType, alertMessage, badge, sound);
     //单推消息体
     var message = new SingleMessage({
         isOffline: true,                        //是否离线
@@ -22,54 +22,54 @@ function pushMessageToSingle(clientId, content, alertMessage, badge, sound, ALIA
     });
 
     if (ALIAS) {
-	    target.setAppId(GlobalConfig.APPID).setAlias(ALIAS);
+        target.setAppId(GlobalConfig.APPID).setAlias(ALIAS);
     } else {
-	    target.setAppId(GlobalConfig.APPID).setClientId(clientId);
+        target.setAppId(GlobalConfig.APPID).setClientId(clientId);
     }
     var result = ''
-    return new Promise(function(resolve, reject){
-	    gt.pushMessageToSingle(message, target, function(err, res){
-	        if(err != null){
-	            reject(err)
-	        } else {
-		        resolve(res)
-	        }
-	    })
-    }).then(function(data){
-    	if (data) {
-    		result = data
-    	}
-    }, function(err){
-    	if (err != null && err.exception != null && err.exception instanceof RequestError) {
-    		return new Promise(function(resolve, reject){
-	            //发送异常重传
-	            gt.pushMessageToSingle(message,target,requestId,function(err, res){
-	            	if (err) {
-	            		reject(err)
-	            	} else {
-	            		resolve(res)
-	            	}
-	            });
+    return new Promise(function (resolve, reject) {
+        gt.pushMessageToSingle(message, target, function (err, res) {
+            if (err != null) {
+                reject(err)
+            } else {
+                resolve(res)
+            }
+        })
+    }).then(function (data) {
+        if (data) {
+            result = data
+        }
+    }, function (err) {
+        if (err != null && err.exception != null && err.exception instanceof RequestError) {
+            return new Promise(function (resolve, reject) {
+                //发送异常重传
+                gt.pushMessageToSingle(message, target, requestId, function (err, res) {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(res)
+                    }
+                });
             })
-    	} else {
-    		return Promise.reject(err)
-    	}
-    }).then(function(data){
-    	if (data) {
-    		result = data
-    	}
-		return Promise.resolve(result)
-    }, function(err){
-    	return Promise.reject(err)
+        } else {
+            return Promise.reject(err)
+        }
+    }).then(function (data) {
+        if (data) {
+            result = data
+        }
+        return Promise.resolve(result)
+    }, function (err) {
+        return Promise.reject(err)
     })
 }
 
-function createTransmissionTemplate(content, alertMessage, badge, sound) {
+function createTransmissionTemplate(content, transmissionType, alertMessage, badge, sound) {
     var template = new TransmissionTemplate();
     template.setAppId(GlobalConfig.APPID);
     template.setAppkey(GlobalConfig.APPKEY);
     template.setTransmissionContent(content);
-    template.setTransmissionType(1);
+    template.setTransmissionType(transmissionType);
     if (alertMessage) {
         var payload = new APNPayload();
         payload.badge = badge;
@@ -111,23 +111,24 @@ function getDictionaryAlertMsg() {
  * @param     {string}  MASTERSECRET  示例：uIBtmad7RK706cy5MKdfp3
  * @returns   {object}  返回一个新的对象，其中包括了所有 module.export.* 的方法和参数
  */
-exports.init = function(HOST, APPID, APPKEY, MASTERSECRET) {
-	GlobalConfig.init(HOST, APPID, APPKEY, MASTERSECRET)
+exports.init = function (HOST, APPID, APPKEY, MASTERSECRET) {
+    GlobalConfig.init(HOST, APPID, APPKEY, MASTERSECRET)
 
-	/**
-	 * 给单个用户发送推送，优先以 ALIAS 为准（存在 ALIAS 则不会给 clientId 发送）
-	 * @function  pushMessageToSingle
-	 * @param     {string}  clientId  接收推送的 clientId
-	 * @param     {string}  content   推送内容
-	 * @param     {string}  alertMessage   提示内容
-	 * @param     {int}  badge  iOS badge
-	 * @param     {string}  sound  iOS sound
-	 * @param     {string || null}  ALIAS   如果传 ALIAS，则默认 clientId 失效
-	 * @returns   {Promise}  Promise
-	 */
-	module.exports.pushMessageToSingle = function(clientId, content, alertMessage, badge, sound, ALIAS){
-		return pushMessageToSingle(clientId, content, alertMessage, badge, sound, ALIAS)
-	}
+    /**
+     * 给单个用户发送推送，优先以 ALIAS 为准（存在 ALIAS 则不会给 clientId 发送）
+     * @function  pushMessageToSingle
+     * @param     {string}  clientId  接收推送的 clientId
+     * @param     {string}  content   推送内容
+     * @param     {String}  transmissionType 收到消息是否立即启动应用，1为立即启动，2则广播等待客户端自启动
+     * @param     {string}  alertMessage   提示内容
+     * @param     {int}  badge  iOS badge
+     * @param     {string}  sound  iOS sound
+     * @param     {string || null}  ALIAS   如果传 ALIAS，则默认 clientId 失效
+     * @returns   {Promise}  Promise
+     */
+    module.exports.pushMessageToSingle = function (clientId, content, transmissionType, alertMessage, badge, sound, ALIAS) {
+        return pushMessageToSingle(clientId, content, transmissionType, alertMessage, badge, sound, ALIAS)
+    }
 
-	return this
+    return this
 }

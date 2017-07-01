@@ -12,7 +12,7 @@ npm install getui-node -S
 ```javascript
 		var getui = require('getui-node').init(HOST, APPID, APPKEY, MASTERSECRET)
 		
-		getui.pushMessageToSingle(clientId, '内容测试', '测试通知', 0, null).then(function(data){
+		getui.pushMessageToSingle(clientId, '内容测试',2, '测试通知', 0, null).then(function(data){
 			console.log(data)
 		}, function(err){
 			console.error(err)
