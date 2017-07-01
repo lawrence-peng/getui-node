@@ -78,27 +78,27 @@ function createTransmissionTemplate(content, transmissionType, alertMessage, bad
         payload.sound = sound;
         payload.customMsg.payload = "payload";
         // 简单模式使用
-        var alertMsg = new SimpleAlertMsg();
-        alertMsg.alertMsg = alertMessage;
-        payload.alertMsg = alertMsg;
-        // payload.alertMsg = getDictionaryAlertMsg();
+        // var alertMsg = new SimpleAlertMsg();
+        // alertMsg.alertMsg = alertMessage;
+        //payload.alertMsg = alertMsg;
+        payload.alertMsg = getDictionaryAlertMsg(content, alertMessage);
         template.setApnInfo(payload);
     }
     return template
 }
 
 // 字典形式的 alert，暂时不使用
-function getDictionaryAlertMsg() {
+function getDictionaryAlertMsg(body, title) {
     var alertMsg = new DictionaryAlertMsg();
-    alertMsg.body = "body";
-    alertMsg.actionLocKey = "ActionLockey";
-    alertMsg.locKey = "LocKey";
-    alertMsg.locArgs = "loc-args";
-    alertMsg.launchImage = "launch-image";
-    // IOS8.2以上版本支持
-    alertMsg.title = "Title";
-    alertMsg.titleLocKey = "TitleLocKey";
-    alertMsg.titleLocArgs = "TitleLocArg";
+    alertMsg.body = body
+    alertMsg.actionLocKey = ''
+    alertMsg.locKey = ''
+    alertMsg.locArgs = Array('')
+    alertMsg.launchImage = ''
+    // ios8.2以上版本支持
+    alertMsg.title = title
+    alertMsg.titleLocKey = ''
+    alertMsg.titleLocArgs = Array('')
     return alertMsg;
 }
 
