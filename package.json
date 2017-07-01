@@ -1,5 +1,5 @@
 {
-  "name": "getui",
+  "name": "getui-node",
   "version": "0.0.1",
   "description": "Node wrapper for getui OS SDK API",
   "main": "index.js",
@@ -10,9 +10,14 @@
     "os",
     "android"
   ],
-  "author": "getui.com",
+  "author": "lawrence",
   "engines": {
     "node": "4.x"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lawrence-peng/getui-node.git"
   },
   "dependencies": {
     "colour": "^0.7.1",
