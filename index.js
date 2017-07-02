@@ -5,6 +5,7 @@ var SimpleAlertMsg = require('./payload/SimpleAlertMsg');
 var Target = require('./getui/Target');
 var SingleMessage = require('./getui/message/SingleMessage');
 var TransmissionTemplate = require('./getui/template/TransmissionTemplate');
+var DictionaryAlertMsg = require('./payload/DictionaryAlertMsg')
 
 function pushMessageToSingle(clientId, content, transmissionType, alertMessage, badge, sound, ALIAS) {
     var gt = GlobalConfig.gt
