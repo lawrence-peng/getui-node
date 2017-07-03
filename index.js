@@ -5,7 +5,44 @@ var SimpleAlertMsg = require('./payload/SimpleAlertMsg');
 var Target = require('./getui/Target');
 var SingleMessage = require('./getui/message/SingleMessage');
 var TransmissionTemplate = require('./getui/template/TransmissionTemplate');
+var APNTemplate = require('./getui/template/APNTemplate')
 var DictionaryAlertMsg = require('./payload/DictionaryAlertMsg')
+
+
+function pushAPNMessageToSingle(deviceToken, title, content, badge, sound) {
+    var gt = GlobalConfig.gt
+    //APN高级推送
+    var template = new APNTemplate();
+    var payload = new APNPayload();
+    var alertMsg = new DictionaryAlertMsg();
+    alertMsg.body = content;
+    alertMsg.actionLocKey = "";
+    alertMsg.locKey = "";
+    alertMsg.locArgs = Array("");
+    alertMsg.launchImage = "";
+    //ios8.2以上版本支持
+    alertMsg.title = title;
+    alertMsg.titleLocKey = "";
+    alertMsg.titleLocArgs = Array("");
+
+    payload.alertMsg = alertMsg;
+    payload.sound = sound || '';
+    payload.badge = badge;
+    template.setApnInfo(payload);
+
+
+    var message = new SingleMessage();
+    message.setData(template);
+    return new Promise(function (resolve, reject) {
+        gt.pushAPNMessageToSingle(GlobalConfig.APPID, deviceToken, message, function (err, res) {
+            if (err != null) {
+                reject(err)
+            } else {
+                resolve(res)
+            }
+        });
+    })
+}
 
 function pushMessageToSingle(clientId, content, transmissionType, alertMessage, badge, sound, ALIAS) {
     var gt = GlobalConfig.gt
@@ -129,6 +166,19 @@ exports.init = function (HOST, APPID, APPKEY, MASTERSECRET) {
      */
     module.exports.pushMessageToSingle = function (clientId, content, transmissionType, alertMessage, badge, sound, ALIAS) {
         return pushMessageToSingle(clientId, content, transmissionType, alertMessage, badge, sound, ALIAS)
+    }
+
+    /**
+     * 给单个用户发送推送
+     * @param deviceToken
+     * @param title
+     * @param content
+     * @param badge
+     * @param sound
+     * @returns {*}
+     */
+    module.exports.pushAPNMessageToSingle = function (deviceToken, title, content, badge, sound) {
+        return pushAPNMessageToSingle(deviceToken, title, content, badge, sound)
     }
 
     return this
